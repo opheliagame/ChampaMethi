@@ -1,24 +1,21 @@
 let singVoice = 'Google 日本語';
 let myVoice = new p5.Speech(singVoice); // new P5.Speech object
 let lyrics = 'baa baa black sheep have you any wool';
-let words = lyrics.split(' ');
-let rhythm = [];
-let song = [];
-words.forEach(word => {
-  let rate = Math.random();
-  rhythm.push(rate);
-  song.push({word: word, rate: rate});
-})
-let speakButton, singButton;
+let song = makeSong(lyrics);
+let speakButton, singButton, lyricsInput;
 let currentUtterance = null;
 
-function setup()
-{
+function setup() {
   createCanvas(400, 400);
+
+  lyricsInput = createInput(lyrics);
+  lyricsInput.elt.style.width = `${width}px`;
+  lyricsInput.elt.style.height = `${width/6}px`;
  
   speakButton = createButton('speak');
   speakButton.mousePressed(() => {
-    // myVoice.listVoices();
+    lyrics = lyricsInput.value();
+    song = makeSong(lyrics);
     let index = Math.floor(Math.random()*song.length);
     let utterance = song[index];
     myVoice.setRate(utterance.rate);
@@ -28,8 +25,11 @@ function setup()
 
   singButton = createButton('sing');
   singButton.mousePressed(() => {
-     singSong(song)
+    lyrics = lyricsInput.value();
+    song = makeSong(lyrics);
+    singSong(song);
   });
+
 
   textSize(32);
 }
@@ -42,6 +42,18 @@ function draw() {
     text(currentUtterance.word, 20, 100);
     text(currentUtterance.rate, 20, 200);
   }
+}
+
+function makeSong(lyrics) {
+  let words = lyrics.split(' ');
+  let rhythm = [];
+  let song = [];
+  words.forEach(word => {
+    let rate = Math.random();
+    rhythm.push(rate);
+    song.push({word: word, rate: rate});
+  })
+  return song;
 }
 
 // using web speech api directly 
