@@ -14,7 +14,6 @@ let currentUtterance = null;
 function setup()
 {
   createCanvas(400, 400);
-  // console.log(song);
  
   speakButton = createButton('speak');
   speakButton.mousePressed(() => {
@@ -30,6 +29,8 @@ function setup()
   singButton.mousePressed(() => {
      singSong(song)
   });
+
+  textSize(32);
 }
 
 
@@ -49,18 +50,17 @@ var synth = window.speechSynthesis;
 function singSong(song) {
   // queuing song elements one after the other
   song.forEach(element => {
-    console.log(element.rate, element.word);
-    // synth.setRate(element.rate);
     let utterance = new SpeechSynthesisUtterance();
     utterance.voice = synth.getVoices().filter(v => v.name === "Google 日本語")[0];
     utterance.rate = element.rate;
     utterance.text = element.word;
     synth.speak(utterance);
+    utterance.onstart = utteranceOnStart;
   })
 }
 
-myVoice.onStart = (e) => {
-  // console.log(e);
-  console.log(e.currentTarget.text, e.currentTarget.rate);
+function utteranceOnStart(event) {
+  console.log(event.utterance.text, event.utterance.rate);
+  currentUtterance = {word: event.utterance.text, rate: event.utterance.rate};
 }
 
