@@ -1,4 +1,5 @@
-let myVoice = new p5.Speech('Google 日本語'); // new P5.Speech object
+let singVoice = 'Google 日本語';
+let myVoice = new p5.Speech(singVoice); // new P5.Speech object
 let lyrics = 'baa baa black sheep have you any wool';
 let words = lyrics.split(' ');
 let rhythm = [];
@@ -47,11 +48,15 @@ function draw() {
 // p5 library probably has a bug with queuing speech utterance event objects
 var synth = window.speechSynthesis;
 
+function getVoice(voice) {
+    return voice.name === singVoice;
+}
+
 function singSong(song) {
   // queuing song elements one after the other
   song.forEach(element => {
     let utterance = new SpeechSynthesisUtterance();
-    utterance.voice = synth.getVoices().filter(v => v.name === "Google 日本語")[0];
+    utterance.voice = synth.getVoices().find(getVoice);
     utterance.rate = element.rate;
     utterance.text = element.word;
     synth.speak(utterance);
@@ -61,6 +66,6 @@ function singSong(song) {
 
 function utteranceOnStart(event) {
   console.log(event.utterance.text, event.utterance.rate);
-  currentUtterance = {word: event.utterance.text, rate: event.utterance.rate};
+  currentUtterance = {word: event.utterance.text, rate: event.utterance.rate.toFixed(2)};
 }
 
